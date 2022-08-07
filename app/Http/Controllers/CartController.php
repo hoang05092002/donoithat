@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,6 +17,7 @@ class CartController extends Controller
      */
     public function index()
     {
+        // dd(session('product'));
         $products = Cart::where('user_id', '=', Auth::user()->id)
             ->join('products', 'products.id', '=', 'carts.product_id')
             ->get(['carts.discount', 'products.id', 'products.name', 'products.main_img', 'products.price']);
@@ -52,30 +54,26 @@ class CartController extends Controller
     {
         $item = Cart::where('product_id', '=', $product->id)->where('user_id', '=', Auth::user()->id)->get();
         $item = count($item) ? $item[0] : null;
-        // $id = $item->pluck('id');
-        // dd($item);
-        if (Auth::user()) {
-            if ($item == null) {
-                $cart = new Cart();
-                $cart->product_id = $product->id;
-                $cart->user_id = Auth::user()->id;
+        $user_id = Auth::user() ? Auth::user()->id : 0;
 
-                if ($request->discount) {
-                    $cart->discount = $request->discount;
-                } else {
-                    $cart->discount = 1;
-                }
+        if ($item == null) {
+            $cart = new Cart();
+            $cart->product_id = $product->id;
+            $cart->user_id = $user_id;
 
-                $cart->save();
+            if ($request->discount) {
+                $cart->discount = $request->discount;
             } else {
-                // dd($item);
-                $item->discount = $item->discount + $request->discount;
-                $item->save();
+                $cart->discount = 1;
             }
+
+            $cart->save();
+        } else {
+            // dd($item);
+            $item->discount = $item->discount + $request->discount;
+            $item->save();
         }
-
-        Auth::user()->amount_cart = Cart::where('user_id', '=', Auth::user()->id)->count();
-
+        Auth::user()->amount_cart = Cart::where('user_id', '=', $user_id)->count();
         return redirect()->route('cart.list');
     }
 
@@ -131,8 +129,47 @@ class CartController extends Controller
         //
     }
 
+    public function addToDb($product, $qty) {
+        $item = Cart::where('product_id', '=', $product->id)->where('user_id', '=', Auth::user()->id)->get();
+        $item = count($item) ? $item[0] : null;
+        $user_id = Auth::user() ? Auth::user()->id : 0;
+
+        if ($item == null) {
+            $cart = new Cart();
+            $cart->product_id = $product->id;
+            $cart->user_id = $user_id;
+            $cart->discount = $qty;
+            $cart->save();
+            $user = User::find(Auth::id());
+            $user->amount_cart++;
+            $user->save();
+        } else {
+            // dd($item);
+            $item->discount = $item->discount + $qty;
+            $item->save();
+        }
+        Auth::user()->amount_cart = Cart::where('user_id', '=', $user_id)->count();
+        return redirect()->route('cart.list');
+    }
+
     public function addToCart(Request $request)
     {
-        dd($request->product_id);
+        $product = Product::find($request->product_id);
+        $qty = isset($request->qty) ? $request->qty : 1;
+        if (Auth::user()) {
+            $this->addToDb($product, $qty);
+            // session('amount_cart');
+        } else {
+            if(session()->has('cart')) {
+                $item = $request->session()->get('cart');
+                $item[count($item)] = new Cart();
+                $item[count($item)]->name = $product->name;
+                $item[count($item)]->price = $product->price * $qty;
+                $item[count($item)]->discount = $qty;
+                $request->session()->put('cart', $item);
+            } else {
+
+            }
+        }
     }
 }

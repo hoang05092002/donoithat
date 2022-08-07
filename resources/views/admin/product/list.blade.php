@@ -48,7 +48,7 @@
                                                     @csrf
                                                     <button type="submit"
                                                         class="{{ $product->status == 0 ? 'btn btn-success' : 'btn btn-danger' }}"
-                                                        onclick="return confirm('Are you sure you want to delete this product ?')">
+                                                        onclick="return confirm('Are you sure you want to change status this product ?')">
                                                         <i
                                                             class="{{ $product->status == 0 ? 'fa-solid fa-check' : 'fa-solid fa-x' }}"></i>
                                                     </button>

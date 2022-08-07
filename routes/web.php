@@ -42,7 +42,9 @@ Route::middleware('auth.logout')->prefix('/checkout')->name('checkout')->group(f
     Route::post('/order/{total}', [TransactionController::class, 'store'])->name('.order');
 });
 
-Route::get('/test', [CartController::class, 'addToCart']);
+Route::get('/addToCart', [CartController::class, 'addToCart'])->name('addToCart');
+
+// Route::get('/test', [CartController::class, 'addToCart']);
 
 Route::get('/contact', function () {
     return view('client.contact', [

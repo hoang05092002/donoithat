@@ -146,7 +146,7 @@
                     <div class="col-12 col-sm-3 col-md-12 col-xl-3">
                         <div class="single-product-wrapper">
                             <!-- Product Image -->
-                            <div class="product-img">
+                            <div class="product-img" style="height:200px">
                                 <a href="{{ route('sl-product', $product) }}">
                                     <img src="{{ asset($product->main_img) }}" alt="">
                                 </a>
@@ -179,9 +179,9 @@
                                             @if (Auth::user())
                                                 <input type="hidden" name="auth" value="{{ Auth::user()->id }}" />
                                             @endif
-                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                            <button type="button" class="btn btn-default" id="addToCart"><img src="frontend/img/core-img/cart.png"
-                                                    alt=""></button>
+                                            <input class="product_id" type="hidden" name="product_id" value="{{ $product->id }}">
+                                            <button type="button" class="btn btn-default" id="addToCart"><img
+                                                    src="frontend/img/core-img/cart.png" alt=""></button>
                                         </form>
                                     </div>
                                 </div>
@@ -202,23 +202,24 @@
             </div>
         </div>
     </div>
-    </div>
-    <script>
-        $('#addToCart').click(function(e) {
-            swal("Good job!", "You clicked the button!", "success");
-            $value = $('.addToCart').serializeArray();
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $('#addToCart').on('click', function(e) {
+            swal("Good job!", "You clicked the button!", "success");
             $.ajax({
                 type: 'get',
-                url: '/test',
+                url: '/addToCart',
                 data: {
-                    'product': $value
+                    'product_id': $('.product_id').val(),
                 },
                 success: function(data) {
-                    console.log(true);
-                    // $('tbody').html(data);
+                    console.log(data);
                 }
             });
+
         })
     </script>
     <!-- ##### Main Content Wrapper End ##### -->

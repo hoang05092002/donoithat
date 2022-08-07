@@ -72,15 +72,11 @@ class ProductsController extends Controller
                 'images/product'
             );
             $product->status = 0;
-            // dd($product);
+            $product->view = 0;
             $product->save();
         }
 
-        // dd($product);
-        // dd($request->image);
         if ($request->hasFile('image')) {
-            // dd(true);
-
             $sort_id = 1;
             foreach ($request->image as $image) {
                 $imageSave = new Image();
@@ -137,7 +133,8 @@ class ProductsController extends Controller
         return view('admin.product.create', [
             'product' => $product,
             'catalogs' => $catalogs,
-            'image_list' => $image_list
+            'image_list' => $image_list,
+            'nav_hover' => 'products'
         ]);
     }
 
@@ -207,18 +204,13 @@ class ProductsController extends Controller
 
     public function changeStatus(Product $product) {
         if($product) {
-            $status = Product::select('status')->distinct()->get();
-
-            // dd($status);
-            foreach($status as $st) {
-                if ($st->status != $product->status) {
-                    // echo 'đổi';
-                    $product->status = $st->status;
-                    $product->save();
-                    break;
-                }
+            if($product->status == 0) {
+                $product->status = 1;
+            } else {
+                $product->status = 0;
             }
 
+            $product->save();
             return redirect()->back();
         }
     }

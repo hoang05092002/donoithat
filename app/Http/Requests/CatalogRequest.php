@@ -24,7 +24,7 @@ class CatalogRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|min:6|max:50',
+            'name' => 'required|max:50',
         ];
     }
 }

@@ -15,7 +15,7 @@ class HomeController extends Controller
     public function index()
     {
         $products = new Product();
-        $products = $products->where('view', '>', 0)->take(6)->get();
+        $products = $products->where('view', '>=', 0)->distinct('brand')->take(6)->get();
 
         // dd($products);
         return view('client.home', [
