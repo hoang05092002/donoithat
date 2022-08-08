@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,6 +18,27 @@ class TransactionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
+    {
+        $transactions = Transaction::select()->orderBy('updated_at')->paginate(5);
+
+        // dd($total);
+        return view('admin.transaction.list', [
+            'transactions' => $transactions,
+            'nav_hover' => 'transactions',
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    public function checkout()
     {
         $products = Cart::where('user_id', '=', Auth::user()->id)
             ->join('products', 'products.id', '=', 'carts.product_id')
@@ -35,15 +57,6 @@ class TransactionController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -67,11 +80,13 @@ class TransactionController extends Controller
             $cart = new Cart();
             $products = $cart->where('user_id', '=', Auth::user()->id)->get();
             $product_ids = $products->pluck('id');
+            // dd($products);
             foreach ($products as $product) {
-                $item = Product::select('price')->where('id', '=', $product->id)->get();
+                $item = Product::select('price')->where('id', '=', $product->product_id)->get();
+                // dd();
                 $order = new Order();
                 $order->transaction_id = $transaction->id;
-                $order->product_id = $product->id;
+                $order->product_id = $product->product_id;
                 $order->qty = $product->discount;
                 $order->amount = $product->discount * $item->first()->price;
                 $order->status = 1;
@@ -80,6 +95,11 @@ class TransactionController extends Controller
             }
 
             $cart->destroy($product_ids);
+            $user = User::find(Auth::id());
+            $user->amount_cart = 0;
+            $user->save();
+
+            return redirect()->route('cart.list');
         }
     }
 
@@ -89,9 +109,28 @@ class TransactionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show()
     {
-        //
+        $trans_wait = Transaction::where('user_id', '=', Auth::id())
+            ->where('status', '=', '0')
+            ->get();
+        $trans_paid = Transaction::where('user_id', '=', Auth::id())
+            ->where('status', '=', '1')
+            ->get();
+        $trans_delivery = Transaction::where('user_id', '=', Auth::id())
+            ->where('status', '=', '2')
+            ->get();
+        $trans_delivered = Transaction::where('user_id', '=', Auth::id())
+            ->where('status', '=', '3')
+            ->get();
+
+        return view('client.trackOrder', [
+            'trans_wait' => $trans_wait,
+            'trans_paid' => $trans_paid,
+            'trans_delivery' => $trans_delivery,
+            'trans_delivered' => $trans_delivered,
+            'nav_hover' => ''
+        ]);
     }
 
     /**
@@ -126,5 +165,29 @@ class TransactionController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function delete(Transaction $transaction)
+    {
+        if ($transaction) {
+            $transaction->delete();
+
+            return redirect()->back();
+        }
+    }
+
+    public function changeStatus($id)
+    {
+        if ($id) {
+            $transaction = Transaction::find($id);
+            if ($transaction->status == 0) {
+                $transaction->status = 1;
+            } else {
+                $transaction->status = 0;
+            }
+            $transaction->save();
+        }
+
+        return redirect()->back();
     }
 }

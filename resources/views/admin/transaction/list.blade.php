@@ -1,6 +1,6 @@
 @extends('admin.layout.main')
 
-@section('title', 'Product List')
+@section('title', 'Transaction List')
 
 @section('content')
     <section class="content">
@@ -9,8 +9,6 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <a href="{{route('admin.products.create')}}"><button type="submit" class="btn btn-primary">New Product</button></a>
-
                         </div>
                         {{-- <div class="card-header">
                             <h3 class="card-title">Fixed Header Table</h3>
@@ -34,38 +32,47 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Discount</th>
-                                        <th>Image</th>
-                                        <th>View</th>
+                                        <th>Username</th>
+                                        <th>User Phone</th>
+                                        <th>Amount</th>
+                                        <th>Payment</th>
+                                        <th>Message</th>
+                                        <th>Status</th>
                                         <th>Created_at</th>
                                         <th>Updated_at</th>
-                                        <th colspan="2">Action</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($products as $product)
+                                    @foreach ($transactions as $transaction)
                                         <tr>
-                                            <td>{{ $product->id }}</td>
-                                            <td>{{ $product->name }}</td>
-                                            <td>{{ $product->price }}</td>
-                                            <td>{{ $product->discount }}</td>
-                                            <td><img width="100px" src="{{ asset($product->main_img) }}" alt=""></td>
-                                            <td>{{ $product->view }}</td>
-                                            <td>{{ $product->created_at }}</td>
-                                            <td>{{ $product->updated_at }}</td>
+                                            <td>{{ $transaction->id }}</td>
+                                            <td>{{ $transaction->username }}</td>
+                                            <td>{{ $transaction->user_phone }}</td>
+                                            <td>{{ $transaction->amount }}</td>
+                                            <td>{{ $transaction->payment }}</td>
+                                            <td>{{ $transaction->message }}</td>
                                             <td>
-                                                <form action="{{route('admin.products.edit', $product->id)}}" method="post">
+                                                <form action="{{ route('admin.transactions.changeStatus', $transaction->id) }}"
+                                                    method="post">
                                                     @csrf
-                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                    <button type="submit"
+                                                        class="{{ $transaction->status == 0 ? 'btn btn-success' : 'btn btn-danger' }}"
+                                                        onclick="return confirm('Are you sure you want to change status this transaction ?')">
+                                                        <i
+                                                            class="{{ $transaction->status == 0 ? 'fa-solid fa-check' : 'fa-solid fa-x' }}"></i>
+                                                    </button>
                                                 </form>
                                             </td>
+                                            <td>{{ $transaction->created_at }}</td>
+                                            <td>{{ $transaction->updated_at }}</td>
+
                                             <td>
-                                                <form action="{{route('admin.products.delete', $product)}}" method="post">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger">Delete</a></button>
+                                                <form action="{{ route('admin.transactions.delete', $transaction) }}"
+                                                    method="post">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger">Delete</a></button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -73,7 +80,7 @@
                                 </tbody>
                             </table>
                             <div>
-                                {{ $products->links('pagination::bootstrap-5'); }}
+                                {{ $transactions->links('pagination::bootstrap-5') }}
                             </div>
                         </div>
                         <!-- /.card-body -->

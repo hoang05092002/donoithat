@@ -27,7 +27,7 @@
 
         </div>
     @else
-        <a href="{{route('users')}}" class="btn amado-btn mb-15">Profile</a>
+        <a href="{{ route('users') }}" class="btn amado-btn mb-15">Profile</a>
         @if (Auth::user()->role == 0)
             <a href="{{ route('admin.dashboard') }}" class="btn amado-btn mb-15 text">Administrator</a>
         @endif
@@ -35,7 +35,7 @@
     <!-- Cart Menu -->
     <div class="cart-fav-search mb-100">
         <a href="{{ route('cart.list') }}" class="cart-nav"><img src="img/core-img/cart.png" alt=""> Cart
-            <span>({{ Auth::user() ? Auth::user()->amount_cart : 0 }})</span></a>
+            <span>( {{ isset(Auth::user()->id) ? Auth::user()->amount_cart : session()->get('count') }} )</span></a>
         <a href="#" class="fav-nav"><img src="img/core-img/favorites.png" alt=""> Favourite</a>
         <a href="#" class="search-nav"><img src="img/core-img/search.png" alt=""> Search</a>
     </div>

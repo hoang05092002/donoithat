@@ -88,7 +88,7 @@
                     </div>
 
                     <!-- Add to Cart Form -->
-                    <form class="cart clearfix" method="post" action="{{route('cart.store', $product->id)}}">
+                    <form class="cart clearfix addToCart">
                         @csrf
                         <div class="cart-btn d-flex mb-50">
                             <p>Qty</p>
@@ -97,8 +97,9 @@
                                 <input type="number" name="discount" class="qty-text" id="qty" step="1" min="1" max="300" name="quantity" value="1">
                                 <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-caret-up" aria-hidden="true"></i></span>
                             </div>
+                            <input type="hidden" name="product_id" id="product_id" value="{{$product->id}}">
                         </div>
-                        <button type="submit" name="addtocart" class="btn amado-btn">Add to cart</button>
+                        <button type="button" id="addToCart" name="addtocart" class="btn amado-btn">Add to cart</button>
                     </form>
 
                 </div>
@@ -124,4 +125,25 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $('#addToCart').on('click', function(e) {
+            swal("Product added to cart successfully", "Please go to cart to see more details !", "success");
+            $.ajax({
+                type: 'get',
+                url: '/addToCart',
+                data: {
+                    'product_id': $('#product_id').val(),
+                    'qty': $('#qty').val(),
+                },
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+
+        })
+    </script>
 @endsection

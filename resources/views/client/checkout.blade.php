@@ -35,17 +35,6 @@
                                     <textarea name="message" class="form-control w-100" id="comment" cols="30" rows="10"
                                         placeholder="Leave a comment about your order"></textarea>
                                 </div>
-                                {{-- <div class="col-12">
-                                <div class="custom-control custom-checkbox d-block mb-2">
-                                    <input type="checkbox" class="custom-control-input" id="customCheck2">
-                                    <label class="custom-control-label" for="customCheck2">Create an accout</label>
-                                </div>
-                                <div class="custom-control custom-checkbox d-block">
-                                    <input type="checkbox" class="custom-control-input" id="customCheck3">
-                                    <label class="custom-control-label" for="customCheck3">Ship to a different
-                                        address</label>
-                                </div>
-                            </div> --}}
                             </div>
                         </div>
                     </div>

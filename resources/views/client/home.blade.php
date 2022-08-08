@@ -21,7 +21,7 @@
         <div class="amado-pro-catagory clearfix ">
             <!-- Single Catagory -->
             @foreach ($products as $product)
-                <div class="single-products-catagory clearfix">
+                <div class="single-products-catagory clearfix" style="overflow: hidden; height: 500px">
                     <a href="{{ route('sl-product', $product) }}">
                         <img src="{{ asset($product->main_img) }}" alt="">
                         <!-- Hover Content -->

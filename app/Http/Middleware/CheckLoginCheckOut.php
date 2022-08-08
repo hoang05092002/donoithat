@@ -17,7 +17,7 @@ class CheckLoginCheckOut
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::user()) {
+        if(Auth::user() || Auth::user()->status == 0) {
             return $next($request);
         } else {
             return redirect()->route('sign-in');

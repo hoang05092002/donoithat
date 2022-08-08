@@ -20,7 +20,7 @@
                         </div>
                     </div>
                     <div class="col-4 text-right">
-                        <a href="#!" class="btn btn-sm btn-primary">Settings</a>
+                        <a href="{{route('users.trackOrder')}}" class="btn btn-sm btn-primary">Track Orders</a>
                     </div>
                 </div>
             </div>

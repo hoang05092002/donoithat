@@ -63,7 +63,6 @@ class ProductsController extends Controller
     {
 
         if ($request->hasFile('main_img')) {
-
             $product = new Product();
             $product->fill($request->all());
             $product->main_img = $this->saveFile(
@@ -72,15 +71,11 @@ class ProductsController extends Controller
                 'images/product'
             );
             $product->status = 0;
-            // dd($product);
+            $product->view = 0;
             $product->save();
         }
 
-        // dd($product);
-        // dd($request->image);
         if ($request->hasFile('image')) {
-            // dd(true);
-
             $sort_id = 1;
             foreach ($request->image as $image) {
                 $imageSave = new Image();
@@ -104,13 +99,11 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show($id)
     {
-        // $product = Product::find($product->id);
-        // dd($product);
+        $product = Product::find($id);
         $image = new Image();
-        $images = $image->where("product_id", '=', $product->id)->get();
-        // dd($images);
+        $images = $image->where("product_id", '=', $id)->get();
         $catalog = Catalog::find($product->catalog_id);
         return view('client.product', [
             'product' => $product,
@@ -137,7 +130,8 @@ class ProductsController extends Controller
         return view('admin.product.create', [
             'product' => $product,
             'catalogs' => $catalogs,
-            'image_list' => $image_list
+            'image_list' => $image_list,
+            'nav_hover' => 'products'
         ]);
     }
 
@@ -148,7 +142,7 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ProductRequest $request, $id)
     {
         $product = Product::find($id);
         $product->fill($request->all());
@@ -207,18 +201,13 @@ class ProductsController extends Controller
 
     public function changeStatus(Product $product) {
         if($product) {
-            $status = Product::select('status')->distinct()->get();
-
-            // dd($status);
-            foreach($status as $st) {
-                if ($st->status != $product->status) {
-                    // echo 'đổi';
-                    $product->status = $st->status;
-                    $product->save();
-                    break;
-                }
+            if($product->status == 0) {
+                $product->status = 1;
+            } else {
+                $product->status = 0;
             }
 
+            $product->save();
             return redirect()->back();
         }
     }

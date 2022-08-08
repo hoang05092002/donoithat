@@ -30,19 +30,21 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
 
-Route::get('/single-product/{product}', [ProductsController::class, 'show'])->name('sl-product');
+Route::get('/single-product/{id}', [ProductsController::class, 'show'])->name('sl-product');
 
-Route::middleware('auth.logout')->prefix('/cart')->name('cart')->group(function () {
+Route::prefix('/cart')->name('cart')->group(function () {
     Route::post('/store/{product}', [CartController::class, 'store'])->name('.store');
     Route::get('/', [CartController::class, 'index'])->name('.list');
 });
 
-Route::middleware('auth.logout')->prefix('/checkout')->name('checkout')->group(function () {
-    Route::post('/', [TransactionController::class, 'index'])->name('.index');
+Route::middleware('auth')->prefix('/checkout')->name('checkout')->group(function () {
+    Route::post('/', [TransactionController::class, 'checkout'])->name('.index');
     Route::post('/order/{total}', [TransactionController::class, 'store'])->name('.order');
 });
 
-Route::get('/test', [CartController::class, 'addToCart']);
+Route::get('/addToCart', [CartController::class, 'addToCart'])->name('addToCart');
+
+// Route::get('/test', [CartController::class, 'addToCart']);
 
 Route::get('/contact', function () {
     return view('client.contact', [
@@ -67,9 +69,10 @@ Route::middleware('guest')->group(function () {
 
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/change-password', [GoogleLoginController::class, 'changePassword'])->name('changePassword');
-Route::prefix('/users')->name('users')->group(function () {
+Route::middleware('auth')->prefix('/users')->name('users')->group(function () {
     Route::get('/', [AuthController::class, 'show']);
     Route::put('update/{user}', [AuthController::class, 'update'])->name('.update');
+    Route::get('/track-order', [TransactionController::class, 'show'])->name('.trackOrder');
 });
 
 Route::middleware('auth.admin')->prefix('/admin')->name('admin')->group(function () {
@@ -113,11 +116,10 @@ Route::middleware('auth.admin')->prefix('/admin')->name('admin')->group(function
     });
 
     Route::prefix('/transactions')->name('.transactions')->group(function () {
-        Route::get('/', [ProductsController::class, 'index'])->name('.list');
-        Route::get('/create', [ProductsController::class, 'create'])->name('.create');
-        Route::post('/store', [ProductsController::class, 'store'])->name('.store');
-        Route::post('/edit/{product}', [ProductsController::class, 'edit'])->name('.edit');
-        Route::put('/update/{id}', [ProductsController::class, 'update'])->name('.update');
-        Route::delete('/delete/{product}', [ProductsController::class, 'delete'])->name('.delete');
+        Route::get('/', [TransactionController::class, 'index'])->name('.list');
+        Route::get('/create', [TransactionController::class, 'create'])->name('.create');
+        Route::post('/store', [TransactionController::class, 'store'])->name('.store');
+        Route::post('/changeStatus/{id}', [TransactionController::class, 'changeStatus'])->name('.changeStatus');
+        Route::delete('/delete/{transaction}', [TransactionController::class, 'delete'])->name('.delete');
     });
 });

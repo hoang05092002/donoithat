@@ -4,18 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
+
+    public function __construct()
+    {
+        if(session()->has('count')) {
+            session()->put('count', Auth::user()->amount_cart);
+        } else {
+            session()->put('count', 0);
+        }
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     *
      */
     public function index()
     {
         $products = new Product();
-        $products = $products->where('view', '>', 0)->take(6)->get();
+        $products = $products->where('view', '>=', 0)->distinct('brand')->take(6)->get();
 
         // dd($products);
         return view('client.home', [

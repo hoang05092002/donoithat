@@ -3,6 +3,8 @@
 @section('title', 'Create New Product')
 
 @section('content')
+    {{-- <script src="https://cdn.ckeditor.com/[version.number]/[distribution]/ckeditor.js"></script> --}}
+
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -11,14 +13,6 @@
                     <div class="card card-blue">
                         <div class="card-header">
                             <h3 class="card-title">Create New Product</h3>
-                        </div>
-
-                        <div>
-                            <div>
-                                @if ($errors->any())
-                                    @dd($errors)
-                                @endif
-                            </div>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -39,7 +33,7 @@
                                                 value="{{ isset($product->name) ? $product->name : '' }}">
                                         </div>
                                     </div>
-                                    <div class="text-danger">{{ $errors->name }}</div>
+                                    {{-- <div class="text-danger">{{ $errors->name }}</div> --}}
                                     <div class="col-sm-12">
                                         <!-- text input -->
                                         <div class="form-group">
@@ -160,5 +154,12 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                @endsection
+    <script>
+        CKEDITOR.replace('description');
+    </script>
+@endsection

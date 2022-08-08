@@ -24,14 +24,16 @@ class ProductRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
+            'name' => 'required|min:6|max:30',
+            'brand' => 'required|min:6|max:30|',
+
         ];
     }
 
     public function messages()
     {
         return [
-            'name.required' => 'False'
+            // 'name.required' => 'False'
         ];
     }
 }

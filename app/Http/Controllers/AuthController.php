@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Models\Cart;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\URL;
 
 class AuthController extends Controller
 {
+
     public function loginForm()
     {
         return view('auth.sign-in', [
@@ -27,6 +29,20 @@ class AuthController extends Controller
 
         if (Auth::attempt(['email' => $email, 'password' => $password])) {
             $auth = Auth::user();
+            if (session()->has('cart')) {
+                foreach (session()->get('cart') as $id => $product) {
+                    $cart = new Cart();
+                    $cart->user_id = Auth::id();
+                    $cart->product_id = $id;
+                    $cart->discount = $product->discount;
+                    $cart->save();
+                }
+
+                $user = User::find(Auth::id());
+                $count = Cart::where('user_id', '=', Auth::id())->count();
+                $user->amount_cart = $count;
+                $user->save();
+            }
             if ($auth->role == 0) {
                 return redirect()->route('admin.dashboard');
             } else {
@@ -68,7 +84,7 @@ class AuthController extends Controller
         $user = new User();
         $user = $user->fill($request->all());
 
-        if($request->hasFile('avatar')) {
+        if ($request->hasFile('avatar')) {
             $user->avatar = $this->saveFile(
                 $request->avatar,
                 $request->name,
@@ -86,7 +102,7 @@ class AuthController extends Controller
 
     public function show(Request $request)
     {
-        if($request->session()->has('error_pass')) {
+        if ($request->session()->has('error_pass')) {
             $error = $request->session()->pull('error_pass', '');
         } else {
             $error = null;
@@ -97,9 +113,10 @@ class AuthController extends Controller
         ]);
     }
 
-    public function update(RegisterRequest $request) {
-        if($request->all()) {
-            if(Auth::attempt(['password' => $request->password])) {
+    public function update(RegisterRequest $request)
+    {
+        if ($request->all()) {
+            if (Auth::attempt(['password' => $request->password])) {
                 $user = new User();
                 $user = $user->fill($request->all());
                 $user->save();

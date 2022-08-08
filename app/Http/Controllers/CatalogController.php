@@ -17,12 +17,6 @@ class CatalogController extends Controller
     public function index()
     {
         $catalogs = Catalog::select('id', 'name', 'created_at', 'updated_at', 'parent_id')->orderBy('updated_at', 'DESC')->paginate(10);
-        // $catalog_children = [];
-        // $count = 0;
-        // foreach ($catalogs as $item) {
-        //     $count ++;
-        //     $catalog_children[$count] = Catalog::select('id', 'name', 'parent_id', 'created_at', 'updated_at')->orderBy('created_at', 'DESC')->get();
-        // }
         return view('admin.catalog.list', [
             'catalogs' => $catalogs,
             // 'catalog_children' => $catalog_children,
@@ -55,7 +49,12 @@ class CatalogController extends Controller
         if ($request->all()) {
             $catalog = new Catalog();
             $catalog->fill($request->all());
-            $catalog->sort_order = 0;
+            $parent = Catalog::find($request->parent_id);
+            if ($request->parent_id) {
+                $catalog->sort_order = $parent->sort_order + 1;
+            } else {
+                $catalog->sort_order = 0;
+            }
             $catalog->save();
             return redirect()->route('admin.catalogs.list');
         }
@@ -98,10 +97,15 @@ class CatalogController extends Controller
      */
     public function update(CatalogRequest $request, $id)
     {
-        if($id) {
-            $catalog = new Catalog();
+        if ($id) {
+            $catalog = Catalog::find($id);
+            $parent = Catalog::find($request->parent_id);
             $catalog = $catalog->fill($request->all());
-            $catalog->sort_order = 0;
+            if ($request->parent_id) {
+                $catalog->sort_order = $parent->sort_order + 1;
+            } else {
+                $catalog->sort_order = 0;
+            }
             $catalog->save();
 
             return redirect()->route('admin.catalogs.list');
