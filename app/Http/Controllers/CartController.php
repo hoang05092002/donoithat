@@ -17,15 +17,9 @@ class CartController extends Controller
      */
     public function index()
     {
-<<<<<<< HEAD
-        // dd(session()->get('count'));
-=======
-        // dd(session('product'));
         $products = Cart::where('user_id', '=', Auth::user()->id)
             ->join('products', 'products.id', '=', 'carts.product_id')
             ->get(['carts.discount', 'products.id', 'products.name', 'products.main_img', 'products.price']);
-        // dd($products);
->>>>>>> 70cddd0a3961c1b354f79e0583f7432118d63512
         $total = 0;
         if (Auth::id()) {
             $products = Cart::where('user_id', '=', Auth::user()->id)
@@ -63,8 +57,6 @@ class CartController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-<<<<<<< HEAD
-=======
     public function store(Product $product, Request $request)
     {
         $item = Cart::where('product_id', '=', $product->id)->where('user_id', '=', Auth::user()->id)->get();
@@ -91,7 +83,6 @@ class CartController extends Controller
         Auth::user()->amount_cart = Cart::where('user_id', '=', $user_id)->count();
         return redirect()->route('cart.list');
     }
->>>>>>> 70cddd0a3961c1b354f79e0583f7432118d63512
 
     /**
      * Display the specified resource.
@@ -145,12 +136,7 @@ class CartController extends Controller
         //
     }
 
-<<<<<<< HEAD
-    public function addToDb($product, $qty)
-    {
-=======
     public function addToDb($product, $qty) {
->>>>>>> 70cddd0a3961c1b354f79e0583f7432118d63512
         $item = Cart::where('product_id', '=', $product->id)->where('user_id', '=', Auth::user()->id)->get();
         $item = count($item) ? $item[0] : null;
         $user_id = Auth::user() ? Auth::user()->id : 0;
@@ -175,7 +161,6 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
-<<<<<<< HEAD
         $count = session()->get('count');
         $id = $request->product_id;
         $product = Product::find($id);
@@ -199,7 +184,6 @@ class CartController extends Controller
         }
 
         session()->put('count', $count+1);
-=======
         $product = Product::find($request->product_id);
         $qty = isset($request->qty) ? $request->qty : 1;
         if (Auth::user()) {
@@ -217,6 +201,5 @@ class CartController extends Controller
 
             }
         }
->>>>>>> 70cddd0a3961c1b354f79e0583f7432118d63512
     }
 }
