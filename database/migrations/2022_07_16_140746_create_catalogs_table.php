@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('catalogs', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('name')->unique();
             $table->integer('parent_id');
             $table->tinyInteger('sort_order');
             $table->timestamps();

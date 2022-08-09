@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Models\Catalog;
 use App\Models\Image;
+use App\Models\Order;
 use App\Models\Product;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -190,6 +192,13 @@ class ProductsController extends Controller
     {
         // dd($product);
         if ($product) {
+            $orders = Order::where('product_id', '=', $product->id)->pluck('transaction_id');
+            // dd($orders);
+            if($orders) {
+                $transactions = Transaction::where('status', '=', 1)->whereIn('id', $orders)->get();
+                $transactions->first->status = 0;
+                $transactions->first()->save();
+            }
             $image_list = new Image();
             $image_list->pluck('id');
             Image::whereIn('product_id', $image_list)->delete();

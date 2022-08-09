@@ -133,6 +133,21 @@ class TransactionController extends Controller
         ]);
     }
 
+    public function info(Transaction $transaction)
+    {
+        $orders = Order::select('products.name', 'products.price', 'products.main_img', 'orders.id', 'orders.qty', 'orders.amount', 'orders.created_at', 'orders.updated_at')
+            ->where('transaction_id', '=', $transaction->id)
+            ->join('products', 'products.id' ,'orders.product_id')
+            ->get();
+
+
+        return view('admin.transaction.orders', [
+            'orders' => $orders,
+            'transaction' => $transaction,
+            'nav_hover' => 'transactions'
+        ]);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -176,18 +191,14 @@ class TransactionController extends Controller
         }
     }
 
-    public function changeStatus($id)
+    public function changeStatus($id, $status)
     {
+        // dd($id, $status);
         if ($id) {
             $transaction = Transaction::find($id);
-            if ($transaction->status == 0) {
-                $transaction->status = 1;
-            } else {
-                $transaction->status = 0;
-            }
+            $transaction->status = $status;
             $transaction->save();
         }
-
-        return redirect()->back();
+        return redirect()->route('admin.transactions.list');
     }
 }

@@ -119,7 +119,8 @@ Route::middleware('auth.admin')->prefix('/admin')->name('admin')->group(function
         Route::get('/', [TransactionController::class, 'index'])->name('.list');
         Route::get('/create', [TransactionController::class, 'create'])->name('.create');
         Route::post('/store', [TransactionController::class, 'store'])->name('.store');
-        Route::post('/changeStatus/{id}', [TransactionController::class, 'changeStatus'])->name('.changeStatus');
+        Route::post('/changeStatus/{id}/{status}', [TransactionController::class, 'changeStatus'])->name('.changeStatus');
         Route::delete('/delete/{transaction}', [TransactionController::class, 'delete'])->name('.delete');
+        Route::post('/info/{transaction}', [TransactionController::class, 'info'])->name('.info');
     });
 });

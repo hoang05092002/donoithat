@@ -12,7 +12,11 @@
                 <div class="col-md-8">
                     <div class="card card-blue">
                         <div class="card-header">
-                            <h3 class="card-title">Create New Product</h3>
+                            @if (isset($product->id))
+                                <h3 class="card-title">Update Product</h3>
+                            @else
+                                <h3 class="card-title">Create New Product</h3>
+                            @endif
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -21,6 +25,7 @@
                                 method="post" enctype="multipart/form-data">
                                 @if (isset($product->id))
                                     @method('PUT')
+                                    {{-- @dd(old()) --}}
                                 @endif
                                 @csrf
                                 <div class="row">
@@ -30,7 +35,9 @@
                                             <label>Name</label>
                                             <input name="name" type="text" class="form-control"
                                                 placeholder="Enter ..."
-                                                value="{{ isset($product->name) ? $product->name : '' }}">
+                                                value="{{ isset($product->name) ? $product->name : '' }} {{ old('name') }}">
+                                        </div>
+                                        <div class="alert-danger">{{ $errors->first('name') ? $errors->first('name') : '' }}
                                         </div>
                                     </div>
                                     {{-- <div class="text-danger">{{ $errors->name }}</div> --}}
@@ -40,8 +47,10 @@
                                             <label>Brand</label>
                                             <input name="brand" type="text" class="form-control"
                                                 placeholder="Enter ..."
-                                                value="{{ isset($product->brand) ? $product->brand : '' }}">
+                                                value="{{ isset($product->brand) ? $product->brand : '' }} {{ old('brand') }}">
                                         </div>
+                                        <div class="alert-danger">
+                                            {{ $errors->first('brand') ? $errors->first('brand') : '' }}</div>
                                     </div>
 
                                     <div class="col-sm-12">
@@ -50,7 +59,10 @@
                                             <label>Code</label>
                                             <input name="code" type="text" class="form-control"
                                                 placeholder="Enter ..."
-                                                value="{{ isset($product->code) ? $product->code : '' }}">
+                                                value="{{ isset($product->code) ? $product->code : '' }}{{ old('code') }}">
+                                        </div>
+                                        <div class="alert-danger">
+                                            {{ $errors->first('code') ? $errors->first('code') : '' }}
                                         </div>
                                     </div>
                                     <div class="col-sm-12">
@@ -89,8 +101,10 @@
                                         <!-- textarea -->
                                         <div class="form-group">
                                             <label>Description</label>
-                                            <textarea name="description" class="form-control" rows="3" placeholder="Enter ...">{{ isset($product->description) ? $product->description : '' }}</textarea>
+                                            <textarea name="description" class="form-control" rows="3" placeholder="Enter ...">{{ isset($product->description) ? $product->description : '' }}{{ old('description') }}</textarea>
                                         </div>
+                                        <div class="alert-danger">
+                                            {{ $errors->first('description') ? $errors->first('description') : '' }}</div>
                                     </div>
 
                                     <div class="col-sm-12">
@@ -99,7 +113,10 @@
                                             <label>Price</label>
                                             <input name="price" type="number" class="form-control"
                                                 placeholder="Enter ..."
-                                                value="{{ isset($product->price) ? $product->price : '' }}">
+                                                value="{{ old('price') }} {{ isset($product->price) ? $product->price : '' }} ">
+                                        </div>
+                                        <div class="alert-danger">
+                                            {{ $errors->first('price') ? $errors->first('price') : '' }}
                                         </div>
                                     </div>
 
@@ -109,8 +126,10 @@
                                             <label>Discount</label>
                                             <input name="discount" type="number" class="form-control"
                                                 placeholder="Enter ..."
-                                                value="{{ isset($product->discount) ? $product->discount : '' }}">
+                                                value="{{ isset($product->discount) ? $product->discount : '' }}{{ old('discount') }}">
                                         </div>
+                                        <div class="alert-danger">
+                                            {{ $errors->first('discount') ? $errors->first('discount') : '' }}</div>
                                     </div>
 
                                     <div class="col-sm-12">
@@ -118,10 +137,12 @@
                                         <div class="form-group">
                                             <label>Main Image</label>
                                             <input name="main_img" type="file" class="form-control-file"
-                                                placeholder="Enter ...">
+                                                placeholder="Enter ..." id="main_img">
                                             @if (isset($product->main_img))
-                                                <img width="100px" src="{{ asset($product->main_img) }}" alt="">
+                                                <img width="100px" src="{{ asset($product->main_img) }}" alt=""
+                                                    class="main_img">
                                             @endif
+                                            <img width="100px" src="" id="preview" alt="">
                                         </div>
                                     </div>
 
@@ -159,7 +180,26 @@
         </div>
     </section>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
-        CKEDITOR.replace('description');
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    if (isset($('.main_img'))) {
+                        $('.main_img').attr('src', e.target.result);
+                    } else {
+                        $('#preview').attr('src', e.target.result);
+                    }
+                }
+
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+            }
+        }
+
+        $("#main_img").change(function() {
+            readURL(this);
+        });
     </script>
 @endsection

@@ -48,7 +48,7 @@ class RegisterRequest extends FormRequest
             'password.min' => 'Password không ít hơn 6 ký tự',
             'password.max' => 'Password không nhiều hơn 20 ký tự',
             'confirm_password.same' => 'Pass ko trùng',
-            'confirm_password.required' => 'Pass confirm ko để trônggs',
+            'confirm_password.required' => 'Pass confirm ko để trống',
             'avatar.required' => 'Avatar không được để trống',
             'phone.required' => 'Phone không được để trống',
             'phone.min' => 'Phone không ít hơn 10 ký tự',

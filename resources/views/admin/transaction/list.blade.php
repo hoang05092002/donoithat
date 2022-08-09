@@ -40,7 +40,7 @@
                                         <th>Status</th>
                                         <th>Created_at</th>
                                         <th>Updated_at</th>
-                                        <th>Action</th>
+                                        <th colspan="2">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -53,20 +53,31 @@
                                             <td>{{ $transaction->payment }}</td>
                                             <td>{{ $transaction->message }}</td>
                                             <td>
-                                                <form action="{{ route('admin.transactions.changeStatus', $transaction->id) }}"
-                                                    method="post">
-                                                    @csrf
-                                                    <button type="submit"
-                                                        class="{{ $transaction->status == 0 ? 'btn btn-success' : 'btn btn-danger' }}"
-                                                        onclick="return confirm('Are you sure you want to change status this transaction ?')">
-                                                        <i
-                                                            class="{{ $transaction->status == 0 ? 'fa-solid fa-check' : 'fa-solid fa-x' }}"></i>
-                                                    </button>
-                                                </form>
+                                                @if ($transaction->status == 0)
+                                                    <div width="100" class="btn btn-danger">Đã hủy</div>
+                                                @elseif ($transaction->status == 1)
+                                                    <div width="100" class="btn btn-primary">Chờ xác nhận</div>
+                                                @elseif ($transaction->status == 2)
+                                                    <div width="100" class="btn btn-info">Đang vận chuyển</div>
+                                                @elseif($transaction->status == 3)
+                                                    <div width="100" class="btn btn-success">Giao hàng thành
+                                                        công</div>
+                                                @elseif($transaction->status == 4)
+                                                    <div width="100" class="btn btn-warning">Đơn hàng bị trả
+                                                        lại</div>
+                                                @endif
                                             </td>
                                             <td>{{ $transaction->created_at }}</td>
                                             <td>{{ $transaction->updated_at }}</td>
 
+                                            <td>
+                                                <form action="{{ route('admin.transactions.info', $transaction) }}"
+                                                    method="post">
+                                                    @csrf
+                                                    {{-- @method('DELETE') --}}
+                                                    <button type="submit" class="btn btn-info">Info</a></button>
+                                                </form>
+                                            </td>
                                             <td>
                                                 <form action="{{ route('admin.transactions.delete', $transaction) }}"
                                                     method="post">
