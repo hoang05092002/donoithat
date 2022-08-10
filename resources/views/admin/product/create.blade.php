@@ -21,13 +21,13 @@
                         <!-- /.card-header -->
                         <div class="card-body">
                             <form
-                                action="{{ isset($product->id) ? route('admin.products.update', $product->id) : route('admin.products.store') }}"
+                                action="{{ isset($product->id) ? route('admin.products.update') : route('admin.products.store') }}"
                                 method="post" enctype="multipart/form-data">
-                                @if (isset($product->id))
+                                {{-- @if (isset($product->id))
                                     @method('PUT')
-                                    {{-- @dd(old()) --}}
-                                @endif
+                                @endif --}}
                                 @csrf
+                                <input type="hidden" name="id" value="{{ $product->id }}">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <!-- text input -->
@@ -40,7 +40,6 @@
                                         <div class="alert-danger">{{ $errors->first('name') ? $errors->first('name') : '' }}
                                         </div>
                                     </div>
-                                    {{-- <div class="text-danger">{{ $errors->name }}</div> --}}
                                     <div class="col-sm-12">
                                         <!-- text input -->
                                         <div class="form-group">

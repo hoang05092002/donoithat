@@ -131,11 +131,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         $('#addToCart').on('click', function(e) {
-<<<<<<< HEAD
             swal("Product added to cart successfully", "Please go to cart to see more details !", "success");
-=======
-            swal("Good job!", "You clicked the button!", "success");
->>>>>>> 70cddd0a3961c1b354f79e0583f7432118d63512
             $.ajax({
                 type: 'get',
                 url: '/addToCart',

@@ -43,13 +43,10 @@ class TransactionController extends Controller
         $products = Cart::where('user_id', '=', Auth::user()->id)
             ->join('products', 'products.id', '=', 'carts.product_id')
             ->get(['carts.discount', 'products.id', 'products.name', 'products.main_img', 'products.price']);
-        // dd($products);
         $total = 0;
         foreach ($products as $product) {
             $total += $product->discount * $product->price;
         }
-
-        // dd($total);
         return view('client.checkout', [
             'products' => $products,
             'total' => $total,
@@ -99,7 +96,7 @@ class TransactionController extends Controller
             $user->amount_cart = 0;
             $user->save();
 
-            return redirect()->route('cart.list');
+        return redirect()->route('users.trackOrder');
         }
     }
 
@@ -111,24 +108,10 @@ class TransactionController extends Controller
      */
     public function show()
     {
-        $trans_wait = Transaction::where('user_id', '=', Auth::id())
-            ->where('status', '=', '0')
-            ->get();
-        $trans_paid = Transaction::where('user_id', '=', Auth::id())
-            ->where('status', '=', '1')
-            ->get();
-        $trans_delivery = Transaction::where('user_id', '=', Auth::id())
-            ->where('status', '=', '2')
-            ->get();
-        $trans_delivered = Transaction::where('user_id', '=', Auth::id())
-            ->where('status', '=', '3')
-            ->get();
+        $transactions = Transaction::where('user_id', '=', Auth::id())->paginate(5);
 
         return view('client.trackOrder', [
-            'trans_wait' => $trans_wait,
-            'trans_paid' => $trans_paid,
-            'trans_delivery' => $trans_delivery,
-            'trans_delivered' => $trans_delivered,
+            'transactions' => $transactions,
             'nav_hover' => ''
         ]);
     }
@@ -145,6 +128,21 @@ class TransactionController extends Controller
             'orders' => $orders,
             'transaction' => $transaction,
             'nav_hover' => 'transactions'
+        ]);
+    }
+
+    public function clientInfo(Transaction $transaction)
+    {
+        $orders = Order::select('products.name', 'products.price', 'products.main_img', 'orders.id', 'orders.qty', 'orders.amount', 'orders.created_at', 'orders.updated_at')
+            ->where('transaction_id', '=', $transaction->id)
+            ->join('products', 'products.id' ,'orders.product_id')->get();
+
+            // dd($orders);
+
+        return view('client.orders', [
+            'orders' => $orders,
+            'transaction' => $transaction,
+            'nav_hover' => ''
         ]);
     }
 

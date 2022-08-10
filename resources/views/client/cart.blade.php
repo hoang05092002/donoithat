@@ -23,10 +23,10 @@
                             </thead>
                             <tbody>
                                 {{-- @dd($products) --}}
-                                @foreach ($products as $id => $product)
+                                @foreach ($products as $product)
                                     <tr>
                                         <td class="cart_product_img">
-                                            <a href="{{ route('sl-product', $id) }}">
+                                            <a href="{{ route('sl-product', $product->id) }}">
                                                 <img src="{{ asset($product->main_img) }}" width="200" alt="Product">
                                             </a>
                                         </td>

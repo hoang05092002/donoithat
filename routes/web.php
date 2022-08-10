@@ -73,6 +73,7 @@ Route::middleware('auth')->prefix('/users')->name('users')->group(function () {
     Route::get('/', [AuthController::class, 'show']);
     Route::put('update/{user}', [AuthController::class, 'update'])->name('.update');
     Route::get('/track-order', [TransactionController::class, 'show'])->name('.trackOrder');
+    Route::post('/track-order/info/{transaction}', [TransactionController::class, 'clientInfo'])->name('.trackOrderInfo');
 });
 
 Route::middleware('auth.admin')->prefix('/admin')->name('admin')->group(function () {
@@ -91,7 +92,7 @@ Route::middleware('auth.admin')->prefix('/admin')->name('admin')->group(function
         Route::get('/create', [ProductsController::class, 'create'])->name('.create');
         Route::post('/store', [ProductsController::class, 'store'])->name('.store');
         Route::post('/edit/{product}', [ProductsController::class, 'edit'])->name('.edit');
-        Route::put('/update/{id}', [ProductsController::class, 'update'])->name('.update');
+        Route::post('/update', [ProductsController::class, 'update'])->name('.update');
         Route::delete('/delete/{product}', [ProductsController::class, 'delete'])->name('.delete');
         Route::post('/change/{product}', [ProductsController::class, 'changeStatus'])->name('.change');
         Route::get('/search', [ProductsController::class, 'search'])->name('.search');

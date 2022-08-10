@@ -17,9 +17,6 @@ class CartController extends Controller
      */
     public function index()
     {
-        $products = Cart::where('user_id', '=', Auth::user()->id)
-            ->join('products', 'products.id', '=', 'carts.product_id')
-            ->get(['carts.discount', 'products.id', 'products.name', 'products.main_img', 'products.price']);
         $total = 0;
         if (Auth::id()) {
             $products = Cart::where('user_id', '=', Auth::user()->id)
@@ -31,10 +28,12 @@ class CartController extends Controller
             } else {
                 $products = [];
             }
-            foreach ($products as $id => $product) {
-                $total += $product->discount * $product->price;
-            }
         }
+        foreach ($products as $id => $product) {
+            $total += $product->discount * $product->price;
+            // $product->id = $id;
+        }
+        // dd($products);
         return view('client.cart', [
             'products' => $products,
             'total' => $total,
@@ -136,7 +135,8 @@ class CartController extends Controller
         //
     }
 
-    public function addToDb($product, $qty) {
+    public function addToDb($product, $qty)
+    {
         $item = Cart::where('product_id', '=', $product->id)->where('user_id', '=', Auth::user()->id)->get();
         $item = count($item) ? $item[0] : null;
         $user_id = Auth::user() ? Auth::user()->id : 0;
@@ -151,7 +151,6 @@ class CartController extends Controller
             $user->amount_cart++;
             $user->save();
         } else {
-            // dd($item);
             $item->discount = $item->discount + $qty;
             $item->save();
         }
@@ -183,23 +182,6 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
-        session()->put('count', $count+1);
-        $product = Product::find($request->product_id);
-        $qty = isset($request->qty) ? $request->qty : 1;
-        if (Auth::user()) {
-            $this->addToDb($product, $qty);
-            // session('amount_cart');
-        } else {
-            if(session()->has('cart')) {
-                $item = $request->session()->get('cart');
-                $item[count($item)] = new Cart();
-                $item[count($item)]->name = $product->name;
-                $item[count($item)]->price = $product->price * $qty;
-                $item[count($item)]->discount = $qty;
-                $request->session()->put('cart', $item);
-            } else {
-
-            }
-        }
+        session()->put('count', $count + 1);
     }
 }

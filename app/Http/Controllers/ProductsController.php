@@ -137,16 +137,10 @@ class ProductsController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(ProductRequest $request, $id)
+    public function update(ProductRequest $request)
     {
-        $product = Product::find($id);
+        dd($request->all());
+        $product = Product::find();
         $product->fill($request->all());
         // dd($product);
         if ($request->all()) {
